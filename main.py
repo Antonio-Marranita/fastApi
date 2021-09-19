@@ -1,15 +1,34 @@
 import fastapi
 import uvicorn
-
+from typing import Optional
+#httpstatuses.com
 
 api = fastapi.FastAPI()
 
+@api.get('/')
+def index():
+    body="<html>" \
+         "<body>" \
+         "<h3>try /api/calculate</h3>" \
+         "</body>" \
+         "</html>"
+    return fastapi.responses.HTMLResponse(content=body)
+
 @api.get('/api/calculate')
-def calculate():
-    value = 2 + 2
+def calculate(x: int, y: int, z: Optional[int] = None):
+    if z == 0:
+        return fastapi.responses.JSONResponse(content={"error": "ERROR: Z cannot be zero"}, status_code=400)
+
+    value = (x + y)
+
+    if z is not None:
+        value /= z
 
     return{
-        'value' : value
+        'x': x,
+        'y': y,
+        'z': z,
+        'value': value
     }
 
 
